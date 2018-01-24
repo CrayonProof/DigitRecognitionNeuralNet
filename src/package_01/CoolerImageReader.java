@@ -10,6 +10,7 @@ public class CoolerImageReader {
     	
     	String dataString = "";
 		try {
+			//this should not be accessed from my home computer, silly, cause now how will anyone get to it
 			dataString = new String(Files.readAllBytes(Paths.get("C:\\Users\\annie\\Desktop\\Sadie's Programming Stuff\\mnist_train_100.csv")));
 		} 
 		catch (IOException e) {
@@ -44,5 +45,6 @@ public class CoolerImageReader {
 /* Things to do: 
  * --make a bufferedimage out of the array so we can actually see what it looks like
  * --figure out why the outer for loop is broken -_-
+ * --figure out how to access the data file from the cloud, so it isn't limited to local use 
  */
 
