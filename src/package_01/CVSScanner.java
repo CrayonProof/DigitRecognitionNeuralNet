@@ -11,13 +11,13 @@ public class CVSScanner {
 	
 	//constants
 	private static int IMAGE_COUNT = 100;
-	private static int IMAGE_HIGHT = 28;
+	private static int IMAGE_HEIGHT = 28;
 	private static int IMAGE_WIDTH = 28;
 
 
 	public static void main(String[] args) throws FileNotFoundException 
 	{
-		int[][][] testImages = new int[IMAGE_COUNT][IMAGE_HIGHT][IMAGE_WIDTH]; //3d array containing every image in training set. Form: image index, pixel y, pixel x
+		int[][][] testImages = new int[IMAGE_COUNT][IMAGE_HEIGHT][IMAGE_WIDTH]; //3d array containing every image in training set. Form: image index, pixel y, pixel x
 		int[] labels = new int[IMAGE_COUNT]; //1d array containing the corresponding labels for every image in training set
 		Scanner in = new Scanner(new File(System.getProperty("user.dir") + "/mnist_train_100.csv")); //scanner to read files from csv training file
 		
@@ -35,7 +35,7 @@ public class CVSScanner {
 			
 			i = 1; //current pixel for tracking during for loop
 			
-			for (int y = 0; y < IMAGE_HIGHT; y++) //iterates through pixel rows
+			for (int y = 0; y < IMAGE_HEIGHT; y++) //iterates through pixel rows
 			{
 				for (int x = 0; x < IMAGE_WIDTH; x++) //iterates through pixel columns
 				{
@@ -65,7 +65,7 @@ public class CVSScanner {
 			System.out.println("The following image is labeled as a " + labels[imageNum -1]);
 			
 			//prints out the image in ascii
-			for (int y = 0; y < IMAGE_HIGHT; y++) //iterates through pixel rows
+			for (int y = 0; y < IMAGE_HEIGHT; y++) //iterates through pixel rows
 			{
 				for (int x = 0; x < IMAGE_WIDTH; x++) //iterates through pixel columns
 				{
