@@ -18,24 +18,37 @@ public class CoolerImageReader {
 		}
 		
 		int[][] pixels = new int [28][28];
+		
 		String[] dataArray = dataString.split(",");
 		
 		int label;
 		int i = 0;
 		//outer loop doesn't work :( 
-		for(int image = 0; image < 100; image++)
+		for(int image = 0; image < 10; image++)
 		{
 			label = Integer.parseInt(dataArray[i]);
-			System.out.println(label);
+			System.out.println("label: " + label);
 			i++;
+			
 			for(int y = 0; y < 28; y++)
 			{
 				for(int x = 0; x < 28; x++)
 				{
-					pixels[y][x] = Integer.parseInt(dataArray[i]);
-					System.out.print(pixels[y][x] + " ");
-					i++;
+					if (!(dataArray[i] == "\r\n"))
+					{
+						try
+						{
+							pixels[y][x] = Integer.parseInt(dataArray[i]);
+							System.out.print(pixels[y][x] + " ");
+						}
+						catch(java.lang.NumberFormatException e)
+						{
+							System.out.println("SMOORF: " + dataArray[i]);
+						}
+						i++;
+					}
 				}
+				
 				System.out.println();
 			}
 		}
