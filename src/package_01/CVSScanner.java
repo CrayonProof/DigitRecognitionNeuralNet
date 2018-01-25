@@ -58,6 +58,9 @@ public class CVSScanner {
 			imageNum = req.nextInt();
 			}
 			
+			System.out.println();
+			System.out.println("The following image is labeled as a " + labels[imageNum -1]);
+			
 			for (int y = 0; y < IMAGE_HIGHT; y++)
 			{
 				for (int x = 0; x < IMAGE_WIDTH; x++)
