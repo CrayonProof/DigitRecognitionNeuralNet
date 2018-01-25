@@ -1,11 +1,8 @@
 package package_01;
 
 import java.util.Scanner;
-import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class CVSScanner {
 	
