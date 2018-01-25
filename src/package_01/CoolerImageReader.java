@@ -11,7 +11,7 @@ public class CoolerImageReader {
     	String dataString = "";
 		try {
 			//this should not be accessed from my home computer, silly, cause now how will anyone get to it
-			dataString = new String(Files.readAllBytes(Paths.get("C:\\Users\\annie\\Desktop\\Sadie's Programming Stuff\\mnist_train_100.csv")));
+			dataString = new String(Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "\\mnist_train_100.csv")));
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
