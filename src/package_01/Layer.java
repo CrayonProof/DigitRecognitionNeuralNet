@@ -2,57 +2,62 @@ package package_01;
 
 public class Layer {
 	
-	int inputs = 0;
-	int outputs = 0;
+	int neurons;
+	double[][] weights;
+	double[] sums;
+	double[] activations;
 	
-	double[][] weights = new double[inputs][outputs];
-	double[] sums = new double[outputs];
-	double[] activations = new double[outputs];
-	
-	public Layer(int in, int out, int layer)
-	{
-		inputs = in;
-		outputs = out;
+	public Layer(int n) {
+		int neurons = n;
 	}
 	
-	//access input array: in 
+	public int getNeurons()
+	{
+		return neurons;
+	}
 	
-	public double[][] setWeights(int inp, int outp) 
-	{	
-		for (int i = 0; i < inp; i++)
+	public void setWeights(int inputs)
+	{
+		for (int i = 0; i < inputs; i++)
 		{
-			for (int o = 0; o < outp; o++)
+			for (int o = 0; o < this.getNeurons(); o++)
 			{
 				weights[i][o] = Math.random();
 			}
 		}
+	}
+	
+	public double[][] getWeights()
+	{
 		return weights;
 	}
 	
-	
-	public double[] setSums(int inp[], int outp)
-	{	
-		for (int o = 0; o < outp; o++)
+	public void setSums(double[] inputs)
+	{
+		for (int o = 0; o < this.getNeurons(); o++)
 		{
-			for (int i = 0; i < inp.length; i++)
+			for (int i = 0; i < inputs.length; i++)
 			{
-				sums[o] += (weights[i][o] * inp[i]);
+				sums[o] += (weights[i][o] * inputs[i]);
 			}
 		}
-		
+	}
+	
+	public double[] getSums()
+	{
 		return sums;
 	}
 	
-	public double[] setActivations(int outp)
+	public void setActivations(double[] inputs)
 	{
-		
-		for (int o = 0; o < outp; o++)
+		for(int i = 0; i < this.getNeurons(); i++)
 		{
-			activations[o] = (sums[o]); //apply sigmoid function
+			activations[i] = 1 / (1 + Math.exp(-sums[i])); 
 		}
-		
-		return activations;
 	}
 	
-	
+	public double[] getActivations()
+	{
+		return activations;
+	}
 }
