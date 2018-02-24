@@ -1,43 +1,65 @@
 package package_01;
 
+import java.io.File;
 import java.util.Scanner;
+import java.io.FileNotFoundException;
 
-public class Tester {
+public class Tester 
+{
+	private static int IMAGE_HEIGHT = 28;
+	private static int IMAGE_WIDTH = 28;
 
-	public static void main(String[] args) {
-		
-		double[] imageInputs = new double[784];
+	public static void main(String[] args) throws FileNotFoundException
+	{  
+		Scanner in = new Scanner(new File(System.getProperty("user.dir") + "/mnist_train_100.csv")); //scanner to read files from csv training file
 		Scanner sc = new Scanner(System.in);
 		
-		System.out.println("How many layers do you want?");
+		System.out.println("Layers: ");
 		final int layers = sc.nextInt();
-		
 		Layer[] larray = new Layer[layers];
+
+		System.out.println("Images per batch: ");
+		int batchSize = sc.nextInt();
 		
+		double[][] imageInputs = new double[batchSize][IMAGE_HEIGHT * IMAGE_WIDTH];
+		int[] labels = new int[batchSize];
+		
+		//reads csv file into imageInputs array
+		int p;
+		for (int image = 0; image < batchSize; image ++)
+		{
+			String line = in.nextLine();
+			String[] lineArray = line.split(",");
+			
+			labels[image]= Integer.parseInt(lineArray[0]);
+			
+			p = 1; 
+			
+			for (int i = 0; i < IMAGE_HEIGHT * IMAGE_WIDTH; i++) 
+			{
+				imageInputs[image][i] = Integer.parseInt(lineArray[p]);
+				p++;
+			}
+		}
+			
+		//initializes layers
 		for(int i = 0; i < layers; i++)
 		{
-			System.out.println("How many neurons do you want layer " + (i + 1) + " to have?");
+			System.out.println("Neurons in layer " + (i + 1) + ": ");
 			larray[i] = new Layer(sc.nextInt());
 			
 			if (i == 0)
 			{
 				larray[i].setWeights(imageInputs.length);
-				larray[i].setSums(imageInputs);
+				larray[i].setSums(imageInputs[i]);
 				larray[i].setActivations(larray[i].getSums());
 			}
 			else
 			{
 				larray[i].setWeights(larray[i-1].getNeurons());
 				larray[i].setSums(larray[i-1].getActivations());
-				larray[i].setActivations(larray[i-1].getSums());
+				larray[i].setActivations(larray[i].getSums());
 			}
 		}
-		
-		/*for(int i = 0; i < larray[layers - 1].getNeurons(); i++)
-		{
-			System.out.println(larray[layers - 1].getActivations()[i]);
-		}
-		*/
 	}
-
 }

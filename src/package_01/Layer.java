@@ -52,7 +52,7 @@ public class Layer {
 	{
 		for(int i = 0; i < this.getNeurons(); i++)
 		{
-			activations[i] = 1 / (1 + Math.exp(-sums[i])); 
+			activations[i] = 1+ (-2 / (1 + Math.exp(sums[i] / 42))); 
 		}
 	}
 	
