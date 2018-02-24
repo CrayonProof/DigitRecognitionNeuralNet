@@ -6,6 +6,13 @@ import java.io.FileNotFoundException;
 
 public class Tester 
 {
+	public double bonzi(int n, int i, int o, double[] outs)
+	{
+		if (n == 0)
+		{
+			return(outs[o] - )
+		}
+	}
 	private static int IMAGE_HEIGHT = 28;
 	private static int IMAGE_WIDTH = 28;
 
@@ -45,9 +52,17 @@ public class Tester
 		//initializes layers
 		for(int i = 0; i < layers; i++)
 		{
-			System.out.println("Neurons in layer " + (i + 1) + ": ");
-			larray[i] = new Layer(sc.nextInt());
-			
+			if(i == (layers - 1))
+			{
+				System.out.println("10 output neurons in layer " + layers + ", final layer");
+				larray[i] = new Layer(10);
+			}
+			else
+			{
+				System.out.println("Neurons in layer " + (i + 1) + ": ");
+				larray[i] = new Layer(sc.nextInt());
+			}
+
 			if (i == 0)
 			{
 				larray[i].setWeights(imageInputs.length);
@@ -61,5 +76,24 @@ public class Tester
 				larray[i].setActivations(larray[i].getSums());
 			}
 		}
+		
+		double[] yhat = new double[10];
+		
+		for (int i = 0; i < batchSize; i++)
+		{
+			for(int j = 0; j < 10; j++)
+			{
+				if (labels[i] == j)
+				{
+					yhat[j] = 1.0;
+				}
+				else
+				{
+					yhat[j] = 0.0;
+				}
+			}
+		}
+
+
 	}
 }
