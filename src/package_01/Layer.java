@@ -38,17 +38,18 @@ public class Layer {
 		}
 	}
 	
-	public void setActivations(double[] inputs)
+	public void setActivations(int inputs)
 	{
 		for(int i = 0; i < this.getNeurons(); i++)
 		{
-			activations[i] = 1+ (-2 / (1 + Math.exp(sums[i] / 42))); 
+			//activations[i] = 1+ (-2 / (1 + Math.exp(sums[i] / 42)));
+			activations[i] = sums[i]/inputs;
 		}
 	}
 	
-	public double[][] getWeights()
+	public double getWeights(int i, int o)
 	{
-		return weights;
+		return weights[i][o];
 	}
 	
 	public double[] getSums()
@@ -59,5 +60,15 @@ public class Layer {
 	public double[] getActivations()
 	{
 		return activations;
+	}
+	
+	public double getASum(int i)
+	{
+		return sums[i];
+	}
+	
+	public double getAnActivation(int i)
+	{
+		return activations[i];
 	}
 }
