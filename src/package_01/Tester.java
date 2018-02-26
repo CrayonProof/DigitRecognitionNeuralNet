@@ -104,15 +104,13 @@ public class Tester
 			}
 			
 			//print the average cost for each training example, to see if it decreases over time. 
-			//null pointer exception (???) :(
-			/*
+			double cost = 0;
 			for(int o = 0; o < 10; o++)
 			{
 				cost += Math.pow((larray[layers - 1].getAnActivation(o) - yhat[o]), 2);
 			}
 			cost /= 10;
 			System.out.println(cost);
-			*/
 		}
 	}
 	
