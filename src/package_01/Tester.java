@@ -107,7 +107,7 @@ public class Tester
 			double cost = 0;
 			for(int o = 0; o < 10; o++)
 			{
-				cost += Math.pow((larray[layers - 1].getAnActivation(o) - yhat[o]), 2);
+				cost += Math.pow((larray[layers - 1].getActivations()[o] - yhat[o]), 2);
 			}
 			cost /= 10;
 			System.out.println(cost);
