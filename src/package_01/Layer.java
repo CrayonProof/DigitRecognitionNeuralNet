@@ -47,9 +47,19 @@ public class Layer {
 		}
 	}
 	
-	public double getWeights(int i, int o)
+	public void setInputActivations(double[] pixels)
 	{
-		return weights[i][o];
+		activations = pixels.clone();
+	}
+	
+	public void changeWeights(double[][] newWeights)
+	{
+		weights = newWeights;
+	}
+	
+	public double[][] getWeights() 
+	{
+		return weights;
 	}
 	
 	public double[] getSums()
@@ -62,6 +72,11 @@ public class Layer {
 		return activations;
 	}
 	
+	public double getAWeight(int i, int o)
+	{
+		return weights[i][o];
+	}
+
 	public double getASum(int i)
 	{
 		return sums[i];
