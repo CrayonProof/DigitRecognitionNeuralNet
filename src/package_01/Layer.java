@@ -3,47 +3,57 @@ package package_01;
 public class Layer {
 	
 	int neurons;
+	int layer;
 	double[][] weights;
 	double[] sums;
 	double[] activations;
 	
-	public Layer(int n) {
-		int neurons = n;
+	public Layer(int n, int l, int nn) {
+		this.neurons = n;
+		this.layer = l;
+		this.weights = new double[nn][n];
+		this.sums = new double[n];
+		this.activations = new double[n];
 	}
 	
-	public int getNeurons()
+	public int length()
 	{
 		return neurons;
 	}
 	
-	public void setWeights(int inputs)
+	public void setWeights()
 	{
-		for (int i = 0; i < inputs; i++)
+		for (int i = 0; i < weights.length; i++)
 		{
-			for (int o = 0; o < this.getNeurons(); o++)
+			for (int o = 0; o < weights[i].length; o++)
 			{
 				weights[i][o] = Math.random();
+				//System.out.println("i: " + i + " o: " + o + " is: " + weights[i][o]);
 			}
 		}
+		
+		
 	}
 	
 	public void setSums(double[] inputs)
 	{
-		for (int o = 0; o < this.getNeurons(); o++)
+		for (int o = 0; o < this.length(); o++)
 		{
 			for (int i = 0; i < inputs.length; i++)
 			{
 				sums[o] += (weights[i][o] * inputs[i]);
 			}
 		}
+		//System.out.println("sums " + sums[0]);
 	}
 	
 	public void setActivations(int inputs)
 	{
-		for(int i = 0; i < this.getNeurons(); i++)
+		for(int i = 0; i < this.length(); i++)
 		{
 			//activations[i] = 1+ (-2 / (1 + Math.exp(sums[i] / 42)));
 			activations[i] = sums[i]/inputs;
+			//System.out.println(activations[i]);
 		}
 	}
 	

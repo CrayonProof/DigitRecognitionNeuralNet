@@ -4,6 +4,13 @@ import java.io.File;
 import java.util.Scanner;
 import java.io.FileNotFoundException;
 
+//todo
+//implement testing
+//stochastic batches
+//user input
+//read to and from a text file
+
+
 public class Tester 
 {	
 	private static int IMAGE_HEIGHT = 28;
@@ -15,14 +22,14 @@ public class Tester
 		//takes user input for various parameters
 		Scanner sc = new Scanner(System.in);
 		
-		System.out.println("Images per batch: ");
-		int batchSize = sc.nextInt();
+		//System.out.println("Images per batch: ");
+		int batchSize = 10;//sc.nextInt();
 		
-		System.out.println("Learning rate: ");
-		double k = sc.nextDouble();
+		//System.out.println("Learning rate: ");
+		double k = 1;//sc.nextDouble();
 		
-		System.out.println("Layers: (including output layer, not including input layer)");
-		final int layers = sc.nextInt() + 1;
+		//System.out.println("Layers: (including output layer, not including input layer)");
+		final int layers = 4;//sc.nextInt() + 1;
 		Layer[] larray = new Layer[layers];
 		
 		//initializes input data arrays, and desired output array
@@ -32,7 +39,7 @@ public class Tester
 		
 		//initializes input layer
 		System.out.println("Layer 0 contains " + INPUT_PIXELS + " input neurons.");
-		larray[0] = new Layer(INPUT_PIXELS);
+		larray[0] = new Layer(INPUT_PIXELS, 0, 0);
 		
 		//initializes all other layers
 		for(int i = 1; i < layers; i++)
@@ -40,15 +47,15 @@ public class Tester
 			if(i == (layers - 1))
 			{
 				System.out.println("10 output neurons in layer " + (layers - 1) + ", final layer");
-				larray[i] = new Layer(10);
+				larray[i] = new Layer(10, i, larray[i - 1].length());
 			}
 			else
 			{
 				System.out.println("Neurons in layer " + (i) + ": ");
-				larray[i] = new Layer(sc.nextInt());
+				larray[i] = new Layer(sc.nextInt(), i, larray[i - 1].length());
 			}
 
-				larray[i].setWeights(larray[i-1].getNeurons());
+				larray[i].setWeights();
 		}
 		
 		//reads CSV file into imageInputs array
@@ -66,7 +73,7 @@ public class Tester
 			
 			for (int i = 0; i < INPUT_PIXELS; i++) 
 			{
-				imageInputs[image][i] = Integer.parseInt(lineArray[p]);
+				imageInputs[image][i] = ((double)Integer.parseInt(lineArray[p])) / 255;
 				p++;
 			}
 		}
@@ -94,7 +101,7 @@ public class Tester
 			for(int l = 1; l < layers; l++)
 			{
 				larray[l].setSums(larray[l-1].getActivations());
-				larray[l].setActivations(larray[l-1].getNeurons());
+				larray[l].setActivations(larray[l-1].length());
 			}
 			
 			//update weights of each layer
@@ -110,7 +117,7 @@ public class Tester
 				cost += Math.pow((larray[layers - 1].getActivations()[o] - yhat[o]), 2);
 			}
 			cost /= 10;
-			System.out.println(cost);
+			System.out.println("cost: " + cost);
 		}
 	}
 	
@@ -120,11 +127,11 @@ public class Tester
 		double[][] newWeights;
 		int n = l;
 		
-		newWeights = new double[layers[l - 1].getNeurons()][layers[l].getNeurons()];
+		newWeights = new double[layers[l - 1].length()][layers[l].length()];
 		
-		for (int i = 0; i < layers[l - 1].getNeurons(); i++)
+		for (int i = 0; i < layers[l - 1].length(); i++)
 		{
-			for(int o = 0; o < layers[l].getNeurons(); o++)
+			for(int o = 0; o < layers[l].length(); o++)
 			{
 				//should this be + or - ?
 				newWeights[i][o] = oldWeights[i][o] + bonzi(l, n, k, i, o, layers, outs);
@@ -139,30 +146,30 @@ public class Tester
 		int N = layers.length - 1;
 		if (l == N)
 		{
-			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) * (1/layers[l - 1].getNeurons()) * layers[l - 1].getAnActivation(i);
+			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) * (1/layers[l - 1].length()) * layers[l - 1].getAnActivation(i);
 		}
 		else if (n == N)
 		{
-			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) * (1/layers[l-1].getNeurons()) * layers[l-1].getAWeight(i, o);
+			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) * (1/layers[l-1].length()) * layers[l-1].getAWeight(i, o);
 		}
 		else if (n == l)
 		{
 			n++;
-			for(int a = 0; a < layers[l + 1].getNeurons(); a++)
+			for(int a = 0; a < layers[l + 1].length(); a++)
 			{
 				deltaw += bonzi(l, n, k, i, o, layers, outs);
 			}
-			deltaw *= (1/layers[l - 1].getNeurons()) * layers[l - 1].getAnActivation(i);
+			deltaw *= (1/layers[l - 1].length()) * layers[l - 1].getAnActivation(i);
 		}
 		else
 		{
 			n++;
-			for(int a = 0; a < layers[l + 1].getNeurons(); a++)
+			for(int a = 0; a < layers[l + 1].length(); a++)
 			{
 				deltaw += bonzi(l, n, k, i, o, layers, outs);
 			}
 			//possibly getting the wrong weight I'm too tired to think through it
-			deltaw *= (1/layers[l - 1].getNeurons()) * layers[l - 1].getAWeight(i, o);
+			deltaw *= (1/layers[l - 1].length()) * layers[l - 1].getAWeight(i, o);
 		}
 		return deltaw;
 	}
