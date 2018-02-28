@@ -9,11 +9,11 @@ public class Layer {
 	double[] activations;
 	
 	public Layer(int n, int l, int nn) {
-		this.neurons = n;
-		this.layer = l;
-		this.weights = new double[nn][n];
-		this.sums = new double[n];
-		this.activations = new double[n];
+		neurons = n;
+		layer = l;
+		weights = new double[nn][n];
+		sums = new double[n];
+		activations = new double[n];
 	}
 	
 	public int length()
@@ -23,16 +23,25 @@ public class Layer {
 	
 	public void setWeights()
 	{
-		for (int i = 0; i < weights.length; i++)
+		if (layer == 0)
 		{
-			for (int o = 0; o < weights[i].length; o++)
+			for (int o = 0; o < neurons; o++)
+				{
+					weights[0][o] = 1.0;
+				}
+		}
+		else
+		{
+			for (int i = 0; i < weights.length; i++)
 			{
-				weights[i][o] = Math.random();
-				//System.out.println("i: " + i + " o: " + o + " is: " + weights[i][o]);
+				for (int o = 0; o < weights[i].length; o++)
+				{
+					weights[i][o] = Math.random();
+					//System.out.println("i: " + i + " o: " + o + " is: " + weights[i][o]);
+				}
 			}
 		}
-		
-		
+
 	}
 	
 	public void setSums(double[] inputs)

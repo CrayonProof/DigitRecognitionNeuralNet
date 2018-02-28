@@ -39,7 +39,8 @@ public class Tester
 		
 		//initializes input layer
 		System.out.println("Layer 0 contains " + INPUT_PIXELS + " input neurons.");
-		larray[0] = new Layer(INPUT_PIXELS, 0, 0);
+		larray[0] = new Layer(INPUT_PIXELS, 0, 1);
+		larray[0].setWeights();
 		
 		//initializes all other layers
 		for(int i = 1; i < layers; i++)
@@ -105,7 +106,7 @@ public class Tester
 			}
 			
 			//update weights of each layer
-			for(int l = layers - 1; l > 0; l--)
+			for(int l = 1; l < 2; l++)
 			{
 				larray[l].changeWeights(updateWeights(l, k, larray, yhat));
 			}
@@ -150,12 +151,12 @@ public class Tester
 		}
 		else if (n == N)
 		{
-			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) * (1/layers[l-1].length()) * layers[l-1].getAWeight(i, o);
+			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) * (1/layers[l-1].length()) * layers[n].getAWeight(i, o);
 		}
 		else if (n == l)
 		{
 			n++;
-			for(int a = 0; a < layers[l + 1].length(); a++)
+			for(int a = 0; a < layers[n].length(); a++)
 			{
 				deltaw += bonzi(l, n, k, i, o, layers, outs);
 			}
@@ -164,12 +165,12 @@ public class Tester
 		else
 		{
 			n++;
-			for(int a = 0; a < layers[l + 1].length(); a++)
+			for(int a = 0; a < layers[n].length(); a++)
 			{
 				deltaw += bonzi(l, n, k, i, o, layers, outs);
 			}
 			//possibly getting the wrong weight I'm too tired to think through it
-			deltaw *= (1/layers[l - 1].length()) * layers[l - 1].getAWeight(i, o);
+			deltaw *= (1/layers[n - 2].length()) * layers[n].getAWeight(o, o);
 		}
 		return deltaw;
 	}
