@@ -3,6 +3,7 @@ package package_01;
 public class Layer {
 	
 	int neurons;
+	int nneurons;
 	int layer;
 	double[][] weights;
 	double[] sums;
@@ -10,6 +11,7 @@ public class Layer {
 	
 	public Layer(int n, int l, int nn) {
 		neurons = n;
+		nneurons = nn;
 		layer = l;
 		weights = new double[nn][n];
 		sums = new double[n];
@@ -37,7 +39,6 @@ public class Layer {
 				for (int o = 0; o < weights[i].length; o++)
 				{
 					weights[i][o] = Math.random();
-					//System.out.println("i: " + i + " o: " + o + " is: " + weights[i][o]);
 				}
 			}
 		}
@@ -53,16 +54,14 @@ public class Layer {
 				sums[o] += (weights[i][o] * inputs[i]);
 			}
 		}
-		//System.out.println("sums " + sums[0]);
 	}
 	
-	public void setActivations(int inputs)
+	public void setActivations()
 	{
 		for(int i = 0; i < this.length(); i++)
 		{
 			//activations[i] = 1+ (-2 / (1 + Math.exp(sums[i] / 42)));
-			activations[i] = sums[i]/inputs;
-			//System.out.println(activations[i]);
+			activations[i] = sums[i]/nneurons;
 		}
 	}
 	

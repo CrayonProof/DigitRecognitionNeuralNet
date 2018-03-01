@@ -23,7 +23,7 @@ public class Tester
 		Scanner sc = new Scanner(System.in);
 		
 		//System.out.println("Images per batch: ");
-		int batchSize = 10;//sc.nextInt();
+		int batchSize = 100;//sc.nextInt();
 		
 		//System.out.println("Learning rate: ");
 		double k = 1;//sc.nextDouble();
@@ -36,6 +36,7 @@ public class Tester
 		double[][] imageInputs = new double[batchSize][INPUT_PIXELS];
 		int[] labels = new int[batchSize];
 		double[] yhat = new double[10];
+		double cost;
 		
 		//initializes input layer
 		System.out.println("Layer 0 contains " + INPUT_PIXELS + " input neurons.");
@@ -80,7 +81,7 @@ public class Tester
 		}
 						
 		//run the network for every image in the batch
-		for(int i = 0; i < imageInputs.length; i++)
+		for(int i = 0; i < batchSize; i++)
 		{
 			//set desired outputs
 			for(int j = 0; j < 10; j++)
@@ -102,23 +103,24 @@ public class Tester
 			for(int l = 1; l < layers; l++)
 			{
 				larray[l].setSums(larray[l-1].getActivations());
-				larray[l].setActivations(larray[l-1].length());
+				larray[l].setActivations();
 			}
 			
 			//update weights of each layer
-			for(int l = 1; l < 2; l++)
+			for(int l = layers - 1; l > 0; l--)
 			{
 				larray[l].changeWeights(updateWeights(l, k, larray, yhat));
 			}
 			
 			//print the average cost for each training example, to see if it decreases over time. 
-			double cost = 0;
+			cost = 0;
 			for(int o = 0; o < 10; o++)
 			{
-				cost += Math.pow((larray[layers - 1].getActivations()[o] - yhat[o]), 2);
+				System.out.println(larray[1].getAnActivation(o));
+				//cost += Math.pow((larray[layers - 1].getAnActivation(o) - yhat[o]), 2);
 			}
-			cost /= 10;
-			System.out.println("cost: " + cost);
+			//cost /= 10;
+			//System.out.println("cost: " + cost);
 		}
 	}
 	
@@ -135,7 +137,7 @@ public class Tester
 			for(int o = 0; o < layers[l].length(); o++)
 			{
 				//should this be + or - ?
-				newWeights[i][o] = oldWeights[i][o] + bonzi(l, n, k, i, o, layers, outs);
+				newWeights[i][o] = oldWeights[i][o] - bonzi(l, n, k, i, o, layers, outs);
 			}
 		}
 		return newWeights;
@@ -151,26 +153,27 @@ public class Tester
 		}
 		else if (n == N)
 		{
-			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) * (1/layers[l-1].length()) * layers[n].getAWeight(i, o);
+			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) * (1/layers[n-1].length()) * layers[n].getAWeight(i, o);
 		}
 		else if (n == l)
 		{
 			n++;
 			for(int a = 0; a < layers[n].length(); a++)
 			{
-				deltaw += bonzi(l, n, k, i, o, layers, outs);
+				deltaw += bonzi(l, n, k, a, o, layers, outs);
 			}
+			deltaw /= layers[n].length();
 			deltaw *= (1/layers[l - 1].length()) * layers[l - 1].getAnActivation(i);
 		}
 		else
 		{
 			n++;
-			for(int a = 0; a < layers[n].length(); a++)
+			for(int b = 0; b < layers[n].length(); b++)
 			{
-				deltaw += bonzi(l, n, k, i, o, layers, outs);
+				deltaw += bonzi(l, n, k, i, b, layers, outs);
 			}
-			//possibly getting the wrong weight I'm too tired to think through it
-			deltaw *= (1/layers[n - 2].length()) * layers[n].getAWeight(o, o);
+			deltaw /= layers[n].length();
+			deltaw *= (1/layers[n - 2].length()) * layers[n - 1].getAWeight(o, i);
 		}
 		return deltaw;
 	}
