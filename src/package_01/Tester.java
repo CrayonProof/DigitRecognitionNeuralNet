@@ -107,6 +107,7 @@ public class Tester
 			}
 			
 			//update weights of each layer
+			//if(training == true)
 			for(int l = layers - 1; l > 0; l--)
 			{
 				larray[l].changeWeights(updateWeights(l, k, larray, yhat));
@@ -153,29 +154,32 @@ public class Tester
 		}
 		else if (n == N)
 		{
-			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) * (1/layers[n-1].length()) * layers[n].getAWeight(i, o);
+			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) * (1/layers[n - 1].length()) * layers[n].getAWeight(i, o);
 		}
 		else if (n == l)
 		{
 			n++;
 			for(int a = 0; a < layers[n].length(); a++)
 			{
-				deltaw += bonzi(l, n, k, a, o, layers, outs);
+				deltaw += bonzi(l, n, k, o, a, layers, outs);
 			}
-			deltaw /= layers[n].length();
+			//deltaw /= layers[n].length();
 			deltaw *= (1/layers[l - 1].length()) * layers[l - 1].getAnActivation(i);
 		}
 		else
 		{
 			n++;
+			
 			for(int b = 0; b < layers[n].length(); b++)
 			{
-				deltaw += bonzi(l, n, k, i, b, layers, outs);
+				deltaw += bonzi(l, n, k, o, b, layers, outs);
 			}
-			deltaw /= layers[n].length();
-			deltaw *= (1/layers[n - 2].length()) * layers[n - 1].getAWeight(o, i);
+			//deltaw /= layers[n].length();
+			deltaw *= (1/layers[n - 2].length()) * layers[n - 1].getAWeight(i, o);
 		}
 		return deltaw;
 	}
+	
+	//public double test()
 	
 }
