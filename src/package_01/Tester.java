@@ -26,7 +26,7 @@ public class Tester
 		int batchSize = 100;//sc.nextInt();
 		
 		//System.out.println("Learning rate: ");
-		double k = 1;//sc.nextDouble();
+		double k = .3;//sc.nextDouble();
 		
 		//System.out.println("Layers: (including output layer, not including input layer)");
 		final int layers = 4;//sc.nextInt() + 1;
@@ -107,8 +107,7 @@ public class Tester
 			}
 			
 			//update weights of each layer
-			//if(training == true)
-			for(int l = layers - 1; l > 0; l--)
+			for(int l = 1; l < layers; l++)
 			{
 				larray[l].changeWeights(updateWeights(l, k, larray, yhat));
 			}
@@ -117,10 +116,9 @@ public class Tester
 			cost = 0;
 			for(int o = 0; o < 10; o++)
 			{
-				System.out.println(larray[1].getAnActivation(o));
-				//cost += Math.pow((larray[layers - 1].getAnActivation(o) - yhat[o]), 2);
+				cost += Math.pow((larray[layers - 1].getAnActivation(o) - yhat[o]), 2);
 			}
-			//cost /= 10;
+			cost /= 10;
 			//System.out.println("cost: " + cost);
 		}
 	}
@@ -144,17 +142,24 @@ public class Tester
 		return newWeights;
 	}
 	
+	//+ or - bonzi
+	//sigmoid function
+	//sigmoid method
+	//take mean of the sum 
+	
 	public static double bonzi(int l, int n, double k, int i, int o, Layer[] layers, double[] outs)
 	{	
 		double deltaw = 0;
 		int N = layers.length - 1;
 		if (l == N)
 		{
-			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) * (1/layers[l - 1].length()) * layers[l - 1].getAnActivation(i);
+			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) 
+					* layers[l].sigmoidDev(layers[l].getActvalue(), layers[l].getASum(o))
+					* layers[l - 1].getAnActivation(i);
 		}
 		else if (n == N)
 		{
-			deltaw = k * (outs[o]  - layers[l].getAnActivation(o)) * (1/layers[n - 1].length()) * layers[n].getAWeight(i, o);
+			deltaw = k * (outs[o]  - layers[n].getAnActivation(o)) * layers[l].sigmoidDev(layers[l].getActvalue(), layers[l].getASum(o)) * layers[n].getAWeight(i, o);
 		}
 		else if (n == l)
 		{
@@ -164,7 +169,7 @@ public class Tester
 				deltaw += bonzi(l, n, k, o, a, layers, outs);
 			}
 			//deltaw /= layers[n].length();
-			deltaw *= (1/layers[l - 1].length()) * layers[l - 1].getAnActivation(i);
+			deltaw *= ((layers[l].getActvalue() * Math.exp(layers[l].getASum(o) * layers[l].getActvalue())) / Math.pow(Math.exp(layers[l].getASum(o) * layers[l].getActvalue() + 1.0), 2))  * layers[l - 1].getAnActivation(i);
 		}
 		else
 		{
@@ -179,6 +184,10 @@ public class Tester
 		}
 		return deltaw;
 	}
+	
+	
+
+	
 	
 	//public double test()
 	

@@ -8,6 +8,7 @@ public class Layer {
 	double[][] weights;
 	double[] sums;
 	double[] activations;
+	double actvalue;
 	
 	public Layer(int n, int l, int nn) {
 		neurons = n;
@@ -16,11 +17,17 @@ public class Layer {
 		weights = new double[nn][n];
 		sums = new double[n];
 		activations = new double[n];
+		actvalue = 1/ (nn / 4.667);
 	}
 	
 	public int length()
 	{
 		return neurons;
+	}
+	
+	public double getActvalue()
+	{
+		return actvalue;
 	}
 	
 	public void setWeights()
@@ -39,6 +46,10 @@ public class Layer {
 				for (int o = 0; o < weights[i].length; o++)
 				{
 					weights[i][o] = Math.random();
+					if(Math.random() < .5)
+					{
+						weights[i][o] *= -1;
+					}
 				}
 			}
 		}
@@ -61,7 +72,7 @@ public class Layer {
 		for(int i = 0; i < this.length(); i++)
 		{
 			//activations[i] = 1+ (-2 / (1 + Math.exp(sums[i] / 42)));
-			activations[i] = sums[i]/nneurons;
+			activations[i] = (-1 / (1 + Math.exp(actvalue * sums[i]))) + 1;
 		}
 	}
 	
@@ -103,5 +114,11 @@ public class Layer {
 	public double getAnActivation(int i)
 	{
 		return activations[i];
+	}
+	
+	
+	public double sigmoidDev(double x, double y) 
+	{
+		return y * Math.exp(x * y) / Math.pow(Math.exp(x * y), 2);
 	}
 }
