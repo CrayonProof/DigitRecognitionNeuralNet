@@ -58,7 +58,7 @@ public class Layer {
 	
 	public void setSums(double[] inputs)
 	{
-		for (int o = 0; o < this.length(); o++)
+		for (int o = 0; o < neurons; o++)
 		{
 			for (int i = 0; i < inputs.length; i++)
 			{
