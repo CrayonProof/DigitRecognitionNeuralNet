@@ -1,0 +1,283 @@
+/**
+ * A neural network, defined here as a collection of layers.
+ *
+ * @Ian Goodwin
+ * @3/23/2018
+ */
+public class Network {
+    // instance variables - replace the example below with your own
+    public Layer[] layers;
+    //layers[0] is the input layer, and layers[layers.length - 1] is the output layer
+    public int numLayers;
+    public int output;
+    /*
+     * I didn't just make output a return type for feedForward because I wanted the output
+     * to be more generalizable. Maybe that's not important.
+     */
+    public double[][][] weights;
+    /*This is where my notation will probably get wonky. The first index is the index of the
+     * layer where the weights ends - i.e., weights[i][?][?] is one of the set of weights connecting
+     * a neuron from layer index i with a neuron from layer index i+1.
+     * The second index corresponds to the index of the neuron from layer i-1 that the
+     * weight connects to, and the third index of 'weights' is the index of the neuron in
+     * layer i that the weight feeds into.
+     * Incidentally, setting weights up this way will solve the "ghost weights" problem.
+     * I hope that creating a "Network" class won't slow the process down too much, as it
+     * only needs to be created once.
+     */
+    /**
+     * I need to make sure that when a Network is created, the weights are created properly with the right size arrays etc.
+     */
+    
+    public final double learningRate = .03;
+    
+    //I'll use activation (-1,1) and weights (-infinity, infinity)
+    /*
+    public Network(int nL) {
+        // initialise instance variables
+        layers = new Layer[nL];
+        numLayers = nL;
+    }*/
+    
+    public Network(int nL, int[] nNs) {
+        layers = new Layer[nL];
+        numLayers = nL;
+        if(nNs.length != nL) {
+            System.out.println("Dimension mismatch error between Network size and"+
+                "layer size input array");
+        }
+        for(int i = 0; i < numLayers; i++) {
+            layers[i] = new Layer(nNs[i]);
+        }
+        weights = new double[nL - 1][][];
+        for(int i = 0; i < weights.length; i++) {
+            double[][] temp = new double[ layers[i].activations.length ] [ layers[i+1].activations.length ];
+            weights[i]=temp;
+        }
+    }
+    
+    public Network(double[][][] weight, double[][] biases) {//We can extrapolate number of layers and neurons in layer from properly sized weight array
+        numLayers = weights.length + 1;
+        if(numLayers != biases.length)
+        System.out.println("ERROR! DIM MISMATCH IN NETWORK INITIALIZATION!");
+        
+        layers = new Layer[numLayers];
+        for(int i = 0; i < layers.length; i++) {
+            layers[i] = new Layer(biases[i].length);
+            if(layers[i].activations.length != weight[i].length)
+            System.out.println("ERROR! DIM MISTMATCH IN NETWORK INITIALIZATION!");
+        }
+        weights = weight;
+        for(int i = 0; i < biases.length; i++) {
+            layers[i].biases = biases[i];
+        }
+    }
+    
+    public void save() {
+        
+    }
+    
+    /*
+     * 
+     */
+    public void feedForward(double[] inputs) {
+        layers[0].setActivations(inputs);
+        double[] tempActs;
+        for(int k = 1; k < layers.length; k++) {
+            tempActs = new double[layers[k].activations.length];
+            for(int i = 0; i < tempActs.length; i++) {
+                double sum = weightSum(k, i);
+                double squished = squishy(sum);
+                tempActs[i] = squished;
+            }
+            layers[k].setActivations(tempActs);
+        }
+        
+        //To find output in digit recognition
+        double bestAct = 0;
+        int bestFitNeuronIndx = 0;
+        for(int i = 0; i < layers[layers.length - 1].activations.length; i++) {
+            if(layers[layers.length - 1].activations[i] > bestAct) {
+                bestAct = layers[layers.length - 1].activations[i];
+                bestFitNeuronIndx = i;
+            }
+        }
+        output = bestFitNeuronIndx;
+    }
+    
+    /*
+     * This method takes and returns the whatever-dimensions gradient vector
+     * (with each weight and bias as a component) over all training examples in a batch 
+     * times -k, where k is the learning rate. It will also apply said
+     * backpropagation.
+     * 
+     * Parameter trainingOuts: This is an array of expected values for trainings.
+     * First index is which training example we're looking at, second is the
+     * index indicating which expected value we're looking at.
+     * trainingIns is similar, with the first index being which training we observe,
+     * and the second index being which input neuron we're taking the value of.
+     */
+    public double[] backPropagate(double[][] trainingOuts, double[][] trainingIns) {
+        int gradientSize = 0;
+        for(int i = 0; i < layers.length; i++) {
+            gradientSize += layers[i].biases.length;
+            //Number of biases
+        }
+        gradientSize += weights.length * weights[0].length * weights[0][0].length;//number of weights
+        double[] gradient = new double[gradientSize];
+        /*
+         * The gradient will be all biases first - input, then first hidden, then second hidden, etc.
+         * Then all weights - first in order of layers, then in order of first neuron, then
+         * in order of second neuron - basically, in the order of the weights array.
+         */
+        for(int t = 0; t < trainingOuts.length; t++) {//i is the training example we're on currently
+            feedForward(trainingIns[t]);//necessary so that we're measuring the correct cost
+            int indx = 0;
+            for(int l = 0; l < layers.length; l++) {//which layer we are observing, for biases
+                for(int b = 0; b < layers[l].activations.length; b++) {//which neuron - and hence, which bias - we calculate
+                    gradient[indx++] += dC0db(l, b, trainingOuts[t]);
+                }
+            }
+            
+            for(int i = 0; i < weights.length; i++) {
+                for(int j = 0; j < weights[i].length; j++) {
+                    for(int k = 0; k < weights[i][j].length; k++) {
+                        gradient[indx++] += dC0dw(i, j, k, trainingOuts[t]);
+                    }
+                }
+            }
+        }
+        
+        for(int i = 0; i < gradient.length; i++) {
+            gradient[i] /= trainingOuts.length;
+            gradient[i] *= -1 * learningRate;
+        }
+        
+        int indx = 0;
+        for(int l = 0; l < layers.length; l++) {//which layer we are observing, for biases
+            for(int b = 0; b < layers[l].activations.length; b++) {//which neuron - and hence, which bias - we calculate
+                layers[l].biases[b] += gradient[indx++];
+            }
+        }
+        for(int i = 0; i < weights.length; i++) {
+            for(int j = 0; j < weights[i].length; j++) {
+                for(int k = 0; k < weights[i][j].length; k++) {
+                    weights[i][j][k] += gradient[indx++];
+                }
+            }
+        }
+        /*
+         * At this point, all weights/biases should have been adjusted, and there should also be
+         * no "unused" numbers in gradient.
+         */
+        return gradient;
+    }
+    
+    /*
+     * returns the derivative of the cost of one training example with respect to
+     * one weight
+     * 
+     * Preconditions: 0 < layer < layers.length
+     *                expected.length == # neurons in last layer
+     * 
+     * Parameters: Same notation as in layers array, in same order, for first 3.
+     * expected is the array of expected activations 
+     */
+    public double dC0dw(int layer, int start, int end, double[] expected) {
+        double dzdw = layers[layer - 1].activations[start];
+        
+        /*
+         * This is the derivative of the activation with respect to the weighted sum, which
+         * I'm least clear about. If there's a problem learning, look here - esp. if the wrong
+         * thing is being used as the variable here.
+         */
+        final double e = Math.E;
+        double temp = Math.pow(e, weightSum(layer, end));
+        double temp2 = temp + 1;
+        temp2 *= temp2;
+        temp /= temp2;
+        double dadz = temp;
+        
+        double dCda = dC0da(layer, end, expected);
+        return dzdw * dadz * dCda;
+    }
+    
+    /*
+     * returns the derivative of the cost of one training example with respect to
+     * one bias
+     */
+    public double dC0db(int layyer, int whichInLyr, double[] expected) {
+        final double e = Math.E;
+        double temp = Math.pow(e, weightSum(layyer, whichInLyr));
+        double temp2 = temp + 1;
+        temp2 *= temp2;
+        temp /= temp2;
+        double dadz = temp;
+        
+        double dCda = dC0da(layyer, whichInLyr, expected);
+        
+        return dadz*dCda;
+    }
+    
+    /*
+     * Should I make the bounds (multiplier on weighted sum x) correspond to something about the layer?
+     * Speed up learning
+     * 
+     * Parameter weightedSum includes bias
+     */
+    private double squishy(double weightedSum) {
+        double temp = Math.pow(Math.E, weightedSum);
+        temp += 1;
+        temp = -1/temp;
+        temp += 1;
+        return temp;
+    }
+    
+    /*
+     * Parameters: neurIndx is the neuron in that layer
+     */
+    private double weightSum(int layer, int neurIndx) {
+        double sum = 0;
+        for(int j = 0; j < layers[layer-1].activations.length; j++) {
+            double act = layers[layer-1].activations[j];
+            double weight = weights[layer-1][j][neurIndx];
+            sum += act*weight;
+        }
+        sum += layers[layer].biases[neurIndx];
+        
+        return sum;
+    }
+    
+    /*
+     * I copied this code from dC0dw when I realized it needed to be its own method to recur. Transfer
+     * may have been sloppy. it's possible that neurInLyr within the method body
+     * should really be something else. We'll see if it works. Writing code at the end of the
+     * school day right before spring break on an 6.5 hours of sleep not advised.
+     */
+    public double dC0da(int lyr, int neurInLyr, double[] xpected) {
+        double sum = 0;
+        if(lyr == layers.length - 1) {
+            for(int i = 0; i < layers[lyr].activations.length; i++) {
+                sum += (layers[lyr].activations[i] - xpected[i]);
+            }
+            sum *= 2;
+            return sum;
+        } else {
+            //q is the neuron in the "next" layer - the one after "layer"
+            for(int q = 0; q < layers[lyr + 1].activations.length; q++) {
+                double dzda_2 = weights[lyr+1][neurInLyr][q];//Correct?
+                
+                double temp = Math.pow(Math.E, weightSum(lyr, q));
+                double temp2 = temp + 1;
+                temp2 *= temp2;
+                temp /= temp2;
+                double dadz_2 = temp;
+                
+                double dCda_2 = dC0da(lyr + 1, q, xpected);//Should that be q? I think so
+                
+                sum += dzda_2*dadz_2*dCda_2;
+            }
+            return sum;
+        }
+    }
+}

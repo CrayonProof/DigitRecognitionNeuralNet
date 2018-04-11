@@ -1,0 +1,34 @@
+
+/**
+ * The layer of a neural network
+ *
+ * @Ian Goodwin
+ * @3/30/2018
+ */
+public class Layer {
+    // instance variables - replace the example below with your own
+    public double[] activations;
+    public double[] biases;
+    public final int numNeurons;
+
+    /**
+     * Constructor for objects of class Layer
+     */
+    public Layer(int nN) {
+        // initialise instance variables
+        activations = new double[nN];
+        biases = new double[nN];
+        numNeurons = nN;
+    }
+
+    /**
+     * Sets the activations of a layer to certain values
+     *
+     * parameter fresh is the array of new ("fresh") values for the activations
+     */
+    public void setActivations(double[] fresh) {
+        for(int i = 0; i < fresh.length; i++) {
+            activations[i] = fresh[i];
+        }
+    }
+}

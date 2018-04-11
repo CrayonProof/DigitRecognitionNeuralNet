@@ -1,0 +1,13 @@
+public class Tester {
+    public static void main(String [] args) {
+        /**
+         * What will happen in main():
+         * -Network is created
+         * -Loads the training data into arrays for use in training
+         * -Separates training arrays into batches for stochastic gradient descent
+         * -Backpropagates each 
+         */
+        
+        //Separate methods for train and test?
+    }
+}
