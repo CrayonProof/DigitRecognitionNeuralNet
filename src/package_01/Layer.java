@@ -2,6 +2,7 @@ package package_01;
 
 public class Layer {
 	
+	int dd = 0;
 	int neurons;
 	int nneurons;
 	int layer;
@@ -58,21 +59,29 @@ public class Layer {
 	
 	public void setSums(double[] inputs)
 	{
+		
 		for (int o = 0; o < neurons; o++)
 		{
+			sums[o] = 0;
 			for (int i = 0; i < inputs.length; i++)
 			{
 				sums[o] += (weights[i][o] * inputs[i]);
+			}
+			if(layer > 1)
+			{
+				//System.out.println("layer " + layer + "sum " + o);
+				//System.out.println(sums[o]);
 			}
 		}
 	}
 	
 	public void setActivations()
 	{
-		for(int i = 0; i < this.length(); i++)
+		for(int i = 0; i < sums.length; i++)
 		{
 			//activations[i] = 1+ (-2 / (1 + Math.exp(sums[i] / 42)));
-			activations[i] = (-1 / (1 + Math.exp(actvalue * sums[i]))) + 1;
+			//activations[i] = (-1 / (1 + Math.exp(actvalue * sums[i]))) + 1;
+			activations[i] = sums[i]/nneurons;
 		}
 	}
 	
@@ -119,6 +128,13 @@ public class Layer {
 	
 	public double sigmoidDev(double x, double y) 
 	{
+		/*if(y<0 && y> -1)
+			System.out.println("yError");
+		if(Math.pow(Math.exp(x * y), 2) == 0)
+			System.out.println("denomError");
 		return y * Math.exp(x * y) / Math.pow(Math.exp(x * y), 2);
+		//return x/784;
+		 * */
+		 return 1/ nneurons;
 	}
 }

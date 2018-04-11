@@ -9,6 +9,8 @@ import java.io.FileNotFoundException;
 //stochastic batches
 //user input
 //read to and from a text file
+//no ghost weights?
+//make k universal
 
 
 public class Tester 
@@ -104,7 +106,14 @@ public class Tester
 			{
 				larray[l].setSums(larray[l-1].getActivations());
 				larray[l].setActivations();
+				for(int u = 0; u < larray[l].length(); u++)
+				{
+					//System.out.print(larray[l].getASum(u) + "  ");
+				}
+				//System.out.println();
+
 			}
+			
 			
 			//update weights of each layer
 			for(int l = 1; l < layers; l++)
@@ -119,7 +128,7 @@ public class Tester
 				cost += Math.pow((larray[layers - 1].getAnActivation(o) - yhat[o]), 2);
 			}
 			cost /= 10;
-			System.out.println("cost: " + cost);
+			System.out.println(cost);
 		}
 	}
 	
@@ -189,8 +198,5 @@ public class Tester
 					* layers[n - 1].getAWeight(i, o);
 			return deltaw;
 		}		
-	}
-	
-
-	
+	}	
 }
