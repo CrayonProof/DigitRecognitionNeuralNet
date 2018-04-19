@@ -1,0 +1,122 @@
+import java.io.*;
+import java.util.*;
+public class Tester {
+    private static int inputSize;//I forget what size we're dealing with, change later
+    public static void main(String [] args) {
+        /**
+         * What will happen in main():
+         * -Network is created (prompt input?)
+         * -Loads the training data into arrays for use in training
+         * -Separates training arrays into batches for stochastic gradient descent
+         * -Backpropagates each training batch
+         */
+        //Separate methods for train and test?
+        
+        Scanner kbRead = new Scanner(System.in);
+        System.out.println("Load network from file? y/n");
+        char input = kbRead.next().charAt(0); //Clunky but I don't know a great way because nextChar isn't a thing
+        if(input == 'y') {
+            //
+        } else if(input == 'n') {
+            System.out.println("How many layers are in the network? Include input and output layers.");
+            final int nLayers = kbRead.nextInt();
+            final int[] layerSizes = new int[nLayers];
+            for(int i = 1; i < nLayers; i++) {
+                System.out.println("How many neurons are in layer " + (i+1) + "?");
+                layerSizes[i] = kbRead.nextInt();
+            }//Wait the input size will have to be predetermined so we start at i=1
+        }
+        
+        
+    }
+    /*
+    public static void test2() {
+        double[][][] heavy = { {{1}}, {{1}} };
+        double[][] skewed = { {0}, {0}, {0} };
+        Network testing = new Network(heavy, skewed);
+        double[] temp = {1};
+        //testing.printFeedForward(temp);
+        double[][] tempIn = {{1}};
+        double[][] tempOut = {{1}};
+        testing.backPropagate(tempIn, tempOut);
+        
+    }*/
+    public static void test3() {//Current problem is that with multiple training examples, they all converge to the average output. Why?
+        //System.out.println("Index\tb1\tb2\b3\tw000\tw001\tw010\tw011\tw00\tw10");
+        int[] temp = {2, 2, 1};
+        Network testing = new Network(3, temp);
+        //double[][][]temp = { {{-10}} };
+        //double[][] realTemp = { {0}, {5} };
+        //Network testing = new Network(temp, realTemp);
+        testing.print();
+        /*double[] testy = {0, 0};
+        testing.feedForward(testy);
+        System.out.println("\n");
+        testing.print();*/
+        //double[][] tempIn = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+        //double[][] tempOut = {{1}, {1}, {1}, {0}};
+        //double[][][] tempInBig = { {tempIn[0]}, {tempIn[1]}, {tempIn[2]}, {tempIn[3]} };
+        //double[][][] tempOutBig = { {tempOut[0]}, {tempOut[1]}, {tempOut[2]}, {tempOut[3]} };
+        double[][] tempIn = { {0,0}, {0,1}, {1,0}, {1,1} };
+        double[][] tempOut = { {1}, {1}, {1}, {0} };
+        //double avgCostBegin = testing.calcAvgCost(tempIn, tempOut);
+        //double[] tempInTest = {0, 1};
+        //double[] outBegin = testing.feedForward(tempInTest);
+        //double costBegin = testing.calcCost(tempInTest, tempOut[0]);
+        
+        //testing.printBackPropagate(tempIn,tempOut);
+        
+        /*for(int i = 0; i < tempIn.length; i++) {
+            testing.printFeedForward(tempIn[i]);
+        }*/
+        
+        for(int i = 0; i < 50000; i++) {
+            System.out.println("\n");
+            //testing.print();
+            System.out.println("\nBackpropagating;");
+            testing.backPropagate(tempIn, tempOut, true);
+            System.out.println("");
+        }
+        System.out.println("\n");
+        //testing.print();
+        
+        
+        /*for(int i = 0; i < 2; i++) {
+            for(int t = 0; t < tempOutBig.length; t++) {
+                testing.backPropagate(tempInBig[t], tempOutBig[t], true);
+                for(int q = 0; q < tempIn.length; q++) {
+                    testing.printFeedForward(tempIn[q]);
+                }
+                //double[] blek = testing.summary();
+                //for(int j = 0; j < blek.length; j++) {
+                 //   System.out.println(blek[j]);
+                //}
+                //System.out.println("");
+            }
+            //double[] blek = testing.summary();
+            //for(int j = 0; j < blek.length; j++) {
+               // System.out.println(blek[j]);
+            //}
+            //System.out.println("");
+        }
+        /*
+        
+        double avgCostEnd = testing.calcAvgCost(tempIn, tempOut);
+        //double[] outEnd = testing.feedForward(tempInTest);
+        //double costEnd = testing.calcCost(tempInTest, tempOut[0]);
+        /*System.out.println("Changes:");
+        for(int i = 0; i < outEnd.length; i++) {
+            System.out.println(outEnd[i]-outBegin[i]);
+        }*/
+        //System.out.println("Change in cost: "+(costEnd - costBegin));
+        //System.out.println("Change in average cost: "+(avgCostEnd - avgCostBegin));//
+        
+        /*double[] blah = {1,1};
+        double[] test = testing.feedForward(blah);
+        //System.out.println("Result:");//
+        for(int i = 0; i < test.length; i++) {
+            //System.out.println(test[i]);//
+        }
+        */
+    }
+}
