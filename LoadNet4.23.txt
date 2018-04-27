@@ -1,0 +1,29 @@
+Scanner loadNet = new Scanner(new File("H:\\School\\NumberNeuralNet\\NetSets"));
+        loadNet.useDelimiter("*");//Will this work?
+        int maxIndx = -1;
+        ArrayList<String> twoD = new ArrayList<String>();
+        while(loadNet.hasNext()) {
+            twoD.add(loadNet.next());
+            maxIndx++;
+        }
+        loadNet.close();
+        //ArrayList<ArrayList<String>> biases = new ArrayList<ArrayList<String>>();
+        
+        double[][][] stats;
+        //Will be biases + weights; stats.length = weights.length + 1
+        for(int i = 0; i <= maxIndx; i++) {
+            int maxIndx2 = -1;
+            Scanner loadNet2 = new Scanner(twoD.get(i));
+            ArrayList<String> oneD = new ArrayList<String>();//ArrayList of lines
+            while(loadNet2.hasNextLine()) {
+                oneD.add(loadNet2.nextLine());
+                maxIndx2++;
+            }
+            loadNet2.close();
+            //oneD is now the ArrayList of lines for a given 2d array (as described above)
+            for(int j = 0; j <= maxIndx2; j++) {
+                ArrayList<Double> temp = new ArrayList<Double>();
+                Scanner loadNet3 = new Scanner(oneD.get(j));
+                
+            }
+        }

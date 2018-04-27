@@ -1,0 +1,227 @@
+import java.io.*;
+import java.util.*;
+public class Tester {
+    private static int inputSize;//I forget what size we're dealing with, change later
+    public static void main(String [] args) {
+        /**
+         * What will happen in main():
+         * -Network is created (prompt input?)
+         * -Loads the training data into arrays for use in training
+         * -Separates training arrays into batches for stochastic gradient descent
+         * -Backpropagates each training batch
+         */
+        //Separate methods for train and test?
+        
+        Scanner kbRead = new Scanner(System.in);
+        System.out.println("Load network from file? y/n");
+        char input = kbRead.next().charAt(0); //Clunky but I don't know a great way because nextChar isn't a thing
+        if(input == 'y') {
+            //
+        } else if(input == 'n') {
+            System.out.println("How many layers are in the network? Include input and output layers.");
+            final int nLayers = kbRead.nextInt();
+            final int[] layerSizes = new int[nLayers];
+            for(int i = 1; i < nLayers; i++) {
+                System.out.println("How many neurons are in layer " + (i+1) + "?");
+                layerSizes[i] = kbRead.nextInt();
+            }//Wait the input size will have to be predetermined so we start at i=1
+        }
+        
+        
+    }
+    /*
+    public static void test2() {
+        double[][][] heavy = { {{1}}, {{1}} };
+        double[][] skewed = { {0}, {0}, {0} };
+        Network testing = new Network(heavy, skewed);
+        double[] temp = {1};
+        //testing.printFeedForward(temp);
+        double[][] tempIn = {{1}};
+        double[][] tempOut = {{1}};
+        testing.backPropagate(tempIn, tempOut);
+        
+    }*/
+    public static void test3() {//Current problem is that with multiple training examples, they all converge to the average output. Why?
+        //System.out.println("Index\tb1\tb2\b3\tw000\tw001\tw010\tw011\tw00\tw10");
+        int[] temp = {2, 2, 1};
+        Network testing = new Network(3, temp);
+        //double[][][]temp = { {{-10}} };
+        //double[][] realTemp = { {0}, {5} };
+        //Network testing = new Network(temp, realTemp);
+        testing.print();
+        /*double[] testy = {0, 0};
+        testing.feedForward(testy);
+        System.out.println("\n");
+        testing.print();*/
+        //double[][] tempIn = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+        //double[][] tempOut = {{1}, {1}, {1}, {0}};
+        //double[][][] tempInBig = { {tempIn[0]}, {tempIn[1]}, {tempIn[2]}, {tempIn[3]} };
+        //double[][][] tempOutBig = { {tempOut[0]}, {tempOut[1]}, {tempOut[2]}, {tempOut[3]} };
+        double[][] tempIn = { {0,0}, {0,1}, {1,0}, {1,1} };
+        double[][] tempOut = { {1}, {1}, {1}, {0} };
+        //double avgCostBegin = testing.calcAvgCost(tempIn, tempOut);
+        //double[] tempInTest = {0, 1};
+        //double[] outBegin = testing.feedForward(tempInTest);
+        //double costBegin = testing.calcCost(tempInTest, tempOut[0]);
+        
+        //testing.printBackPropagate(tempIn,tempOut);
+        
+        /*for(int i = 0; i < tempIn.length; i++) {
+            testing.printFeedForward(tempIn[i]);
+        }*/
+        
+        for(int i = 0; i < 50000; i++) {
+            System.out.println("\n");
+            //testing.print();
+            System.out.println("\nBackpropagating;");
+            testing.backPropagate(tempIn, tempOut, true, false);
+            System.out.println("");
+        }
+        System.out.println("\n");
+        //testing.print();
+        
+        
+        /*for(int i = 0; i < 2; i++) {
+            for(int t = 0; t < tempOutBig.length; t++) {
+                testing.backPropagate(tempInBig[t], tempOutBig[t], true);
+                for(int q = 0; q < tempIn.length; q++) {
+                    testing.printFeedForward(tempIn[q]);
+                }
+                //double[] blek = testing.summary();
+                //for(int j = 0; j < blek.length; j++) {
+                 //   System.out.println(blek[j]);
+                //}
+                //System.out.println("");
+            }
+            //double[] blek = testing.summary();
+            //for(int j = 0; j < blek.length; j++) {
+               // System.out.println(blek[j]);
+            //}
+            //System.out.println("");
+        }
+        /*
+        
+        double avgCostEnd = testing.calcAvgCost(tempIn, tempOut);
+        //double[] outEnd = testing.feedForward(tempInTest);
+        //double costEnd = testing.calcCost(tempInTest, tempOut[0]);
+        /*System.out.println("Changes:");
+        for(int i = 0; i < outEnd.length; i++) {
+            System.out.println(outEnd[i]-outBegin[i]);
+        }*/
+        //System.out.println("Change in cost: "+(costEnd - costBegin));
+        //System.out.println("Change in average cost: "+(avgCostEnd - avgCostBegin));//
+        
+        /*double[] blah = {1,1};
+        double[] test = testing.feedForward(blah);
+        //System.out.println("Result:");//
+        for(int i = 0; i < test.length; i++) {
+            //System.out.println(test[i]);//
+        }
+        */
+    }
+    public static void test4() throws IOException {//Pretty much copied straight from Sadie + Matt's code
+        //Copied up until the double line break, anyway
+        //reads CSV file into imageInputs array
+        final int IMAGE_HEIGHT = 28;
+        final int IMAGE_WIDTH = 28;
+        final int INPUT_PIXELS = IMAGE_HEIGHT * IMAGE_WIDTH;
+        //System.out.println("Images per batch: ");
+        int batchSize = 100;//sc.nextInt();
+        //initializes input data arrays, and desired output array
+        double[][] imageInputs = new double[batchSize][INPUT_PIXELS];
+        int[] labels = new int[batchSize];
+        double[] yhat = new double[10];
+        Scanner in = new Scanner(new File("H:\\School\\NumberNeuralNet\\Code_texts\\mnist_train_100.csv")); 
+        //System.getProperty("user.dir") + "/mnist_train_100.csv"
+        int p;
+        for (int image = 0; image < batchSize; image ++) {
+            String line = in.nextLine();
+            String[] lineArray = line.split(",");
+            
+            labels[image]= Integer.parseInt(lineArray[0]);
+            
+            p = 1; 
+            
+            for (int i = 0; i < INPUT_PIXELS; i++) {
+                imageInputs[image][i] = ((double)Integer.parseInt(lineArray[p])) / 255;
+                p++;
+            }
+        }
+        /*for(int i = 0; i < labels.length; i++) {
+            System.out.print("Labels index "+i+" is ");
+            System.out.println(labels[i]);
+        }*/
+    
+        int[] sizes = {INPUT_PIXELS, 11, 11, 10};
+        Network identify = new Network(4, sizes);
+        //For these purposes, train on 1st 90, test on last 10
+        double[][] yHats = new double[90][10];
+        for(int i = 0; i < 90; i++) {
+            //System.out.print("Labels index "+i+" in yHatSetter is ");
+            //System.out.println(labels[i]);
+            //set desired outputs; this bit was copied too
+            for(int j = 0; j < 10; j++) {
+                if (labels[i] == j) {
+                    yHats[i][j] = 1.0;
+                    //System.out.println("Image labelled as "+j);
+                } else {
+                    yHats[i][j] = 0.0;
+                }
+            }
+            
+            //yHats[i] = yhat;
+            /*System.out.print("yHats "+i+" set as: ");
+            for(int w = 0; w < 10; w++) {
+                System.out.print(yHats[i][w]+" ");
+            }
+            System.out.println("");*/
+        }
+        double[][] trainIns = new double[90][INPUT_PIXELS];
+        for(int i = 0; i < 90; i++) {
+            trainIns[i] = imageInputs[i];
+        }
+        /*for(int i = 0; i < yHats.length; i++) {
+            System.out.println("yHats "+i+":");
+            for(int j = 0; j < yHats[i].length; j++) {
+                System.out.println(yHats[i][j]);
+            }
+            System.out.println("");
+        }*/
+        //System.out.println("yHats length:");
+        //System.out.println(yHats.length+"\n");
+        for(int i = 0; i < 11; i++) {
+            identify.backPropagate(trainIns, yHats, false, true);
+        }
+        //Now it should be okay trained
+        int numCorrect = 0;
+        for(int i = 90; i < batchSize; i++) {
+            double[] outs = identify.feedForward(imageInputs[i]);
+            //Which number did the net go for?
+            int bestGuess = 0;
+            double maxGuess = 0;
+            for(int j = 0; j < 10; j++) {
+                if(outs[j] > maxGuess) {
+                    maxGuess = outs[j];
+                    bestGuess = j;
+                }
+            }
+            System.out.println("Best guess: "+bestGuess);
+            System.out.println("Label: "+labels[i]);
+            if(bestGuess == labels[i]) {
+                numCorrect++;
+            }
+        }
+        System.out.print(numCorrect);
+        identify.save();
+        Network maybe = Network.load();
+        maybe.feedForward(imageInputs[90]);
+    }
+    public static void saveTest() throws IOException {
+        double[][][] one = { { {.1, .2}, {.3, .4}, {.5, .6} },
+                              { {.7, .8}, {.9,.91} }           };
+        double[][] two = { {1, 2, 3}, {4, 5}, {6,7} };
+        Network maybe = new Network(one, two);
+        maybe.save();
+        Network reallyMaybe = Network.load();
+    }
+}
